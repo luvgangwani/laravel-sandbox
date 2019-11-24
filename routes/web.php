@@ -23,7 +23,7 @@ Route::get('/test', function() {
     return "Hello World from web.php";
 });
 
-Route::get('/rooms', 'ShowRoomsController');
+Route::get('/rooms/{roomType?}', 'ShowRoomsController');
 
 /* Route::get('/bookings', 'BookingController@index');
 Route::get('/bookings/create', 'BookingController@create');
