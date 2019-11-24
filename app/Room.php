@@ -14,4 +14,10 @@ class Room extends Model
 
         return $query;
     }
+
+    // One-to-one relationship
+
+    public function roomType() {
+        return $this->belongsTo('App\RoomType', 'room_type_id', 'id');
+    }
 }

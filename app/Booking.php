@@ -21,4 +21,12 @@ class Booking extends Model
         'notes'
 
     ];
+
+    public function room() {
+        return $this->belongsTo('App\Room');
+    }
+
+    public function users() {
+        return $this->belongsToMany('App\User', 'bookings_users', 'booking_id', 'user_id')->withTimestamps();
+    }
 }

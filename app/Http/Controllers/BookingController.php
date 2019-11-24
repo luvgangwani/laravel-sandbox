@@ -17,7 +17,7 @@ class BookingController extends Controller
     {
         //
         // $bookings = DB::table('bookings')->get();
-        $bookings = Booking::paginate(5);
+        $bookings = Booking::with(['room.roomType', 'users:name'])->paginate(5); // asks laravel to load the related data for the room table
         return view('bookings.index')
                 ->with('bookings', $bookings); // similar to data being passed in the second argument
     }
@@ -63,10 +63,7 @@ class BookingController extends Controller
         ]); */ // using model
 
         $booking = Booking::create($request->input());
-        DB::table('bookings_users')->insert([
-            'booking_id' => $booking->id,
-            'user_id' => $request->input('user_id')
-        ]);
+        $booking->users()->attach($request->input('user_id'));
 
         return redirect()->action("BookingController@index");
     }
@@ -131,12 +128,7 @@ class BookingController extends Controller
         $booking->fill($request->input());
         $booking->save();
 
-        DB::table('bookings_users')
-        ->where('booking_id', $booking->id)
-        ->insert([
-            'booking_id' => $booking->id,
-            'user_id' => $request->input('user_id')
-        ]);
+        $booking->users()->sync([$request->input('user_id')]);
 
         return redirect()->action('BookingController@index');
     }
@@ -151,14 +143,15 @@ class BookingController extends Controller
     {
         //
 
-        DB::table('bookings_users')
+       /*  DB::table('bookings_users')
         ->where('booking_id', $booking->id)
-        ->delete();
+        ->delete(); */
 
         /* DB::table('bookings')
         ->where('id', $booking->id)
         ->delete(); */ // using model
 
+        $booking->users()->detach();
         $booking->delete();
 
         return redirect()->action('BookingController@index');
